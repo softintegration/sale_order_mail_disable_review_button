@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <template id="mail_notification_paynow_online_inherited" inherit_id="sale.mail_notification_paynow_online">
+            <xpath expr="//t[@t-if='record.has_to_be_signed(include_draft=True)']" position="replace">
+                <t t-if="record.has_to_be_signed(include_draft=True) and not record.company_id.disable_mail_review_button">
+                    <t t-if="record.has_to_be_paid()" t-set="access_name">
+                        <t t-if="is_transaction_pending">View Quotation</t>
+                        <t t-else="">Review, Sign &amp; Pay Quotation</t>
+                    </t>
+                    <t t-else="" t-set="access_name">Review, Accept &amp; Sign Quotation</t>
+                </t>
+            </xpath>
+            <xpath expr="//t[@t-elif='record.has_to_be_paid(include_draft=True) and not is_transaction_pending']" position="replace">
+                <t t-elif="record.has_to_be_paid(include_draft=True) and not is_transaction_pending and not record.company_id.disable_mail_review_button">
+                    <t t-set="access_name">Review, Accept &amp; Pay Quotation</t>
+                </t>
+            </xpath>
+            <xpath expr="//t[@t-elif=&quot;record.state in ('draft', 'sent')&quot;]" position="replace">
+                <t t-elif="record.state in ('draft', 'sent') and not record.company_id.disable_mail_review_button">
+                    <t t-set="access_name">View Quotation</t>
+                </t>
+            </xpath>
+    </template>
+
+    <template id="mail_notification_paynow_online" inherit_id="mail.mail_notification_paynow" name="Quotation: Sign and Pay mail notification template">
+        <xpath expr="//a[@t-att-href='access_url']" position="replace">
+            <a t-if="not record.company_id.disable_mail_review_button" t-att-href="access_url"
+               style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                <t t-esc="access_name"/>
+            </a>
+        </xpath>
+    </template>
+
+</odoo>
